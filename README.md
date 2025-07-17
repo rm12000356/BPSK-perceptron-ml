@@ -1,11 +1,37 @@
-# BPSK Perceptron ML Model 
+# Signal Processing and Machine Learning Projects
 
-in this general overview i just want to say, check those models i implemented and f you can share some ideas on how to improcw them, each have a read me file, and a main that implemets the whole code, you can change thinks inside the conf and if you want check out the data manipulation implemented.
+This repository contains a collection of personal and academic projects combining signal processing techniques with machine learning models. Each subfolder focuses on a specific task or algorithm, primarily built using Python and NumPy from scratch.
 
-## Overview
+## Repository Structure
 
-Im just a enthuast trying some thinks and see if I can improve anything related to wireless communication though AI or to be more specific some machine lerning code!!!
+### 1. BPSK-perceptron-ml/
+Implements a custom singlelayer perceptron to classify BPSK (Binary Phase Shift Keying) signals based on I/Q input data. The model is adaptive, supports variable hidden layers, and includes visualization of the training process.
+
+- Tools used: Python, NumPy, Matplotlib
+- Focus: Modulation classification, neural networks, digital signal processing
+
+### 2. MultiLayerPerceptron_ml/
+Implements a custom Mutilayer perceptron to classify BPSK (Binary Phase Shift Keying)(more than 2 constelation points) signals based on I/Q input data. The model is adaptive, supports variable hidden layers, and includes visualization of the training process.
+
+- Tools used: Python, NumPy, Matplotlib
+- Focus: Modulation classification, neural networks, digital signal processing
+## Goals
+
+- Explore how machine learning models can classify modulated signals
+- Build neural networks from scratch without external libraries
+- Apply signal processing knowledge in practical code
+- Prepare for future integration with real-world SDR data
+
+## About
+
+This repository is part of an ongoing study combining communication engineering, digital signal processing, and machine learning. Projects are implemented for learning purposes, academic research, and skill development.
+
+For questions or collaboration, feel free to connect with me on LinkedIn or GitHub.
 
 ## future ideas
 
-i will be starting with QAM i will try reusing the code of BPSK and see if i can addapt it to do QAM, the next step would me to use already ceated code and try for the best model, when i get that i will impment that moddel by hand and see how to improve on it, like making it depended on 2 or more information, why? i could detect if is one of manny QAM architecture and make a guess on letting the program identify for example if user 1 is 8QAM or if use 2 is 4QAM ... that would be more advance but possible still.
+I plan to start working on QAM (Quadrature Amplitude Modulation) by reusing the code developed for BPSK. The goal is to adapt the existing architecture to handle QAM classification.
+
+The next phase will involve testing various pre-built models to identify the best-performing one for this task. Once the optimal model is found, I will reimplement it from scratch to better understand its mechanics and explore possible improvements.
+
+One area of enhancement I want to explore is designing the model to depend on multiple input features. This could enable the system to distinguish between different QAM schemes—such as identifying whether a user is using 4-QAM, 8-QAM, etc.—and make a classification accordingly. This is a more advanced goal, but one that I believe is achievable with the right approach.
