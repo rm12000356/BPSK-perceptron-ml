@@ -1,31 +1,63 @@
-from data_uti import create_data_set_normal
-from config import num_of_points
-from data_uti import labels_insetion
-from perceptron_model import train_perceptron
-from perceptron_model import test_training
-from plot_util import plot_grapgh
+import numpy as np
+from data_utils import create_data_set, labels_insertion
+from perceptron_model import train_perceptron, test_training
+from plot_utils import plot_graph, plot_error_graph, plot_histogram
+from config import NUM_OF_POINTS, NOISE_POWER, PHASE_NOISE, FADING_SCALE, NUM_SYMBOLS
 
-#here the data is created and the targets is determine 
-Data = create_data_set_normal()
-Data_with_noise = create_data_set_normal(noise_power = 0.6 ,phase_noise = 0)
-Data_with_phase = create_data_set_normal(phase_noise = 0.2,noise_power = 0)
-Data_with_phase_and_noise = create_data_set_normal(phase_noise = 0.2,noise_power = 0.2)
-target = labels_insetion(num_of_points, Data)
-
-# plotting of the data to see the graphs 
-plot_grapgh(Data , target)
-plot_grapgh(Data_with_noise , target)
-plot_grapgh(Data_with_phase , target)
-plot_grapgh(Data_with_phase_and_noise , target)
-
-#trainning of the perceptron with the generated data
-weights = train_perceptron(Data)
-#results after the training
-error= test_training(Data ,weights,target)
-print('pure=',error)
-error1= test_training(Data_with_noise ,weights,target)
-print('noice=',error1)
-error2= test_training(Data_with_phase_and_noise ,weights,target)
-print('phase=',error2)
-error3= test_training(Data_with_phase_and_noise ,weights,target)
-print('both=',error3)
+def main():
+    """
+    Run BPSK perceptron analyzer with training, testing, and visualization.
+    """
+    np.random.seed(4)
+    label_type = "symmetric"
+    
+    # Generate data
+    Data = create_data_set()
+    Data_with_noise = create_data_set(noise_power=NOISE_POWER)
+    Data_with_phase = create_data_set(phase_noise=PHASE_NOISE)
+    Data_with_both = create_data_set(phase_noise=PHASE_NOISE, noise_power=NOISE_POWER)
+    Data_with_fading = create_data_set(fading_scale=FADING_SCALE)
+    target = labels_insertion(NUM_OF_POINTS, Data, label_type)
+    
+    # Plot histogram
+    plot_histogram(FADING_SCALE)
+    
+    # Train perceptron
+    weights = train_perceptron(Data, label_type)
+    # Test and plot
+    scenarios = [
+        ("Pure", Data, target),
+        ("Noise", Data_with_noise, target),
+        ("Phase", Data_with_phase, target),
+        ("Both", Data_with_both, target),
+        ("Fading", Data_with_fading, target)
+    ]
+    
+    for name, data, tgt in scenarios:
+        error, errors = test_training(data, weights, tgt, label_type)
+        error_rate = error / NUM_SYMBOLS * 100
+        print(f"{name}: errors={error}, error_rate={error_rate:.2f}%")
+        plot_error_graph(data, tgt, errors, weights)
+        # Optionally save plots
+        # plt.savefig(f"{name.lower()}_constellation.png")
+    
+    # Optional: Test non-symmetric labels
+    label_type_non_sym="nonsymmetric"
+    target_non_sym = labels_insertion(NUM_OF_POINTS, Data, "nonsymmetric")
+    
+    weights_non_sym = train_perceptron(Data, "nonsymmetric")
+    scenarios_non_sym = [
+        ("Pure", Data, target_non_sym),
+        ("Noise", Data_with_noise, target_non_sym),
+        ("Phase", Data_with_phase, target_non_sym),
+        ("Both", Data_with_both, target_non_sym),
+        ("Fading", Data_with_fading, target_non_sym)
+    ]
+    for name, data, tgt in scenarios_non_sym:
+        error, errors = test_training(data, weights_non_sym, tgt, label_type_non_sym)
+        error_rate = error / NUM_SYMBOLS * 100
+        print(f"{name}: errors={error}, error_rate={error_rate:.2f}%")
+        plot_error_graph(data, tgt, errors, weights_non_sym)
+    
+if __name__ == "__main__":
+    main()
