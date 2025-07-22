@@ -53,9 +53,11 @@ Errors highlighted in red for misclassified points.
 
 ## Notes
 
-The perceptron is sensitive to initial weights. The current implementation uses zero-initialized weights ([0, 0]) for stability, ensuring a vertical decision boundary (x=0) for clean BPSK data.
-Numerical noise in imaginary components is minimized by forcing x_symbols = np.cos(x_radians) + 0j in data_utils.py.
-For noisy data (e.g., AWGN, phase noise, fading), error rates increase, and the decision boundary may shift slightly.
+* The perceptron is sensitive to initial weights. The current implementation uses zero-initialized weights ([0, 0]) for stability, ensuring a vertical decision boundary (x=0) for clean BPSK data.
+* Numerical noise in imaginary components is minimized by forcing x_symbols = np.cos(x_radians) + 0j in data_utils.py.
+* For noisy data (e.g., AWGN, phase noise, fading), error rates increase, and the decision boundary may shift slightly.
+* Bias Term: Adding a bias term was tested but led to unreliable results, causing the decision boundary to deviate from the optimal vertical line. This requires further investigation to determine necessary adjustments for bias viability in BPSK classification.
+* The perceptron achieves 0% error for clean data and low error rates for noisy/fading scenarios.
 
 ## Requirements 
 
