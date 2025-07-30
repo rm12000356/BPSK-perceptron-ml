@@ -1,28 +1,60 @@
-# BPSK multilayer Perceptron ML Model
+#8-PSK Multilayer Perceptron Classifier
+##Overview
+This project implements a multilayer perceptron (MLP) to classify 8-PSK (Phase Shift Keying) signals under various conditions, including noise, phase noise, and Rayleigh fading. The MLP is trained to map complex-valued 8-PSK symbols to symmetric labels (e.g., [1, -1, 3, -3, 5, -5, 7, -7]) encoded in binary form. The project includes data generation, training, testing, and visualization of constellation diagrams with decision boundaries.
+##Project Structure
 
-A lightweight and adaptive signal classifier that uses a multilayer-layer perceptron to learn BPSK transitions from raw I/Q signal data.
-What makes this project unique is not just the model — it’s the way data is generated, paired, and labeled to simulate real signal dynamics. There’s also the ability to add noise and phase shifts to simulate reception in different channels with side information (CSI).
+data_utils.py: Generates 8-PSK datasets, assigns symmetric or non-symmetric labels, and separates complex data into real/imaginary components.
+config.py: Defines configuration parameters (e.g., NUM_OF_POINTS = 8, NUM_SYMBOLS = 100, LEARNING_RATE = 0.05, OUTPUT_DIM = 4).
+MultiLayerPerceptron_model.py: Implements the MLP with two hidden layers, training with backpropagation, and testing with MSE and accuracy metrics.
+plot_utils.py: Plots 8-PSK constellations with true labels and adaptive decision boundaries using the trained MLP weights.
+main.py: Orchestrates data generation, training, testing, and plotting for five conditions: pure, noise, phase, both, and fading.
+run_main.ipynb: Jupyter notebook to run main.py and display results.
+
+##Features
+
+Modulation: 8-PSK with symmetric labels and binary encoding.
+MLP Architecture: Two hidden layers with 12 and 10 neurons, tanh and sigmoid activations.
+Conditions Tested: Pure signal, AWGN noise, phase noise, combined noise/phase, and Rayleigh fading.
+Visualization: Constellation plots with decision boundaries for each condition.
+Metrics: Mean squared error (MSE) and classification accuracy.
+
+##Requirements
+
+Python 3.10
+Libraries: numpy, matplotlib
+Environment: Tested in a dl_env virtual environment (see run_main.ipynb).
+
+##Setup
+
+Install dependencies:pip install numpy matplotlib
+
+
+Ensure Python 3.10 is installed and activate your environment:conda activate dl_env
+
+
+Place all .py files and run_main.ipynb in the same directory.
+
+##Usage
+
+Open run_main.ipynb in Jupyter Notebook.
+Run the cell containing %run main.py.
+Expected output:
+Training stops when MSE < 0.01 (e.g., Stopping early at epoch X with MSE Y.YYYY).
+For each condition: [name] error = X.XXXX, accuracy = Y.YYYY.
+Five plots showing 8-PSK constellations with symmetric labels and decision boundaries.
 
 
 
-## Overview
+##Notes
 
-This is a simple multilayer-layer perceptron. It’s implemented like any basic perceptron: you give it data (labeled data), and if the data is linearly separable, it can learn to separate it.
+Labels: Symmetric labels ([1, -1, 3, -3, 5, -5, 7, -7]) are used with 4-bit binary encoding.
+Data: 100 symbols per dataset (NUM_SYMBOLS = 100).
+Plots: Decision boundaries are adaptive, based on MLP predictions over a grid.
+Tuning: Adjust LEARNING_RATE, NUM_EPOCHS, or mse_threshold in config.py for better performance.
 
-There are options for plotting, data creation (with different parameters), and more. In this project, the model works only for 64 points in a constellation, if noice,phase shift are introduce the optimal is 8, and still errors are detected.
+##Future Improvements
 
-The result:
-You get a basic model that learns to identify non-linearly separable points — the main point is that even if i got the right code and i have nearly everythinv vorect the enviroment affects everything, i need to have away to let the machine nor identify the channel side information.
-
-## Key Features
-
-- multilayer-layer perceptron — implemented fully from scratch (no ML libraries)
-- Real-time visualization — plots learning progress and predictions
-- Modular codebase — clean separation of model, data, and plotting
-
-## How Data Works
-
-A sample implementation is provided in **main**. Feedback and suggestions for enhancements to this project are welcome and greatly appreciated.
-
-
-
+Add non-symmetric label support.
+Enhance decision boundary resolution.
+Increase NUM_SYMBOLS for more robust training.
+Add docstrings for all functions in data_utils.py.

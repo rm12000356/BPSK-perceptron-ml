@@ -1,34 +1,33 @@
-from data_uti import create_data_set_normal
-from config import num_of_points
-from MultiLayerPerceptron_model import training_multilayer
-from MultiLayerPerceptron_model import testing
-from data_uti import labels_insetion
-from data_uti import data_separation
-from plot_util import plot_grapgh
+"""
+Main script for training and testing a multilayer perceptron on 8-PSK signals.
+Generates datasets with noise, phase noise, and fading, then evaluates the MLP.
+"""
+from data_utils import create_data_set, labels_insertion
+from config import NUM_OF_POINTS, NOISE_POWER, PHASE_NOISE, FADING_SCALE
+from MultiLayerPerceptron_model import training_multilayer, testing
+from plot_utils import plot_graph
 
-#here the data is created and the targets is determine 
-Data = create_data_set_normal()
-Data_with_noise = create_data_set_normal(noise_power = 0.2 ,phase_noise = 0)
-Data_with_phase = create_data_set_normal(phase_noise = 0.2,noise_power = 0)
-Data_with_phase_and_noise = create_data_set_normal(phase_noise = 0.2,noise_power = 0.1)
-target = labels_insetion(num_of_points, Data)
+# Define test conditions
+conditions = [
+    {"name": "pure", "noise_power": 0, "phase_noise": 0, "fading_scale": 0},
+    {"name": "noise", "noise_power": NOISE_POWER, "phase_noise": 0, "fading_scale": 0},
+    {"name": "phase", "noise_power": 0, "phase_noise": PHASE_NOISE, "fading_scale": 0},
+    {"name": "both", "noise_power": NOISE_POWER / 2, "phase_noise": PHASE_NOISE, "fading_scale": 0},
+    {"name": "fading", "noise_power": 0, "phase_noise": 0, "fading_scale": FADING_SCALE}
+]
 
-# plotting of the data to see the graphs 
-plot_grapgh(Data , target)
-plot_grapgh(Data_with_noise , target)
-#plot_grapgh(Data_with_phase , target)
-#plot_grapgh(Data_with_phase_and_noise , target)
+# Generate training data and labels
+Data = create_data_set()
+target = labels_insertion(NUM_OF_POINTS, Data)
 
-#trainning of the perceptron with the generated data
-hidden_weight,output_weight,binary_target =training_multilayer(Data,target)
+# Train the multilayer perceptron
+weights, binary_target = training_multilayer(Data, target, mse_threshold=0.01)
 
-#results after the training
-#there is a way to introduce a no rounding, that is at the testing function testing(testing_Data,hidden_weight,output_weight,binary_target,"0 for no rounding"-"1 for rounding(default)")
-error= testing(Data,hidden_weight,output_weight,binary_target)
-print('pure=',error)
-error1= testing(Data_with_noise,hidden_weight,output_weight,binary_target)
-print('noice=',error1)
-error2= testing(Data_with_phase,hidden_weight,output_weight,binary_target)
-print('phase=',error2)
-error3= testing(Data_with_phase_and_noise,hidden_weight,output_weight,binary_target)
-print('both=',error3)
+# Test and plot for each condition
+for cond in conditions:
+    # Filter out 'name' key for create_data_set
+    data_params = {k: v for k, v in cond.items() if k in ['noise_power', 'phase_noise', 'fading_scale']}
+    test_data = create_data_set(**data_params)
+    mse, accuracy = testing(test_data, weights, binary_target, rounding=1)
+    print(f"{cond['name']} error = {mse:.4f}, accuracy = {accuracy:.4f}")
+    plot_graph(test_data, target, weights, binary_target, title=f"8-PSK Constellation ({cond['name']})")
